@@ -1,0 +1,48 @@
+<html>
+<head>
+    <title>Animation</title>
+</head>
+<body>
+    <canvas></canvas>
+
+    <script type="text/javascript" src="raf.js"></script>
+    <script type="text/javascript" src="animation.js"></script>
+    <script type="text/javascript">
+        var coin = {x: 10, y: 10};
+        var sprite_sheet = new Image();
+        sprite_sheet.src = 'spinning_coin_gold.png';
+
+        var canvas = document.querySelector('canvas');
+        var draw_context = canvas.getContext('2d');
+
+        var coin_animation = new Animation(8, [
+            { x: 0, y: 0, width: 16, height: 16 },
+            { x: 16, y: 0, width: 16, height: 16 },
+            { x: 32, y: 0, width: 16, height: 16 },
+            { x: 48, y: 0, width: 16, height: 16 },
+            { x: 64, y: 0, width: 16, height: 16 },
+            { x: 80, y: 0, width: 16, height: 16 },
+            { x: 96, y: 0, width: 16, height: 16 },
+            { x: 112, y: 0, width: 16, height: 16 }
+        ]);
+        var frame;
+
+        var last_frame_update_time = Date.now();
+        function loop(timestamp) {
+            // clear the screen
+            draw_context.clearRect(0, 0, canvas.width, canvas.height);
+
+            var dt = timestamp - last_frame_update_time;
+            frame = coin_animation.update(dt);
+
+            // draw the frame from coin_image to the canvas, starting frame * 16 across coin_image for 16 pixels
+            draw_context.drawImage(sprite_sheet, frame.x, frame.y, frame.width, frame.height, coin.x, coin.y, frame.width, frame.height);
+
+            last_frame_update_time = timestamp;
+            window.requestAnimationFrame(loop); // shim? http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+        }
+
+        loop(last_frame_update_time);
+    </script>
+</body>
+</html>
